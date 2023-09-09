@@ -1,0 +1,45 @@
+import time
+import machine
+import utime
+from Light import *
+from Buzzer import *
+from Display import *
+# Generate a random number between 1 and 100
+import urandom
+random_number = urandom.randint(1, 100)
+
+# Initialize LED and button pins
+led = machine.Pin(25, machine.Pin.OUT)
+button = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_DOWN)
+
+# Initialize variables
+attempts = 0
+guess = None
+
+# Main game loop
+while True:
+    try:
+        led.off()  # Turn off LED
+        print("Guess the number between 1 and 100:")
+        guess = int(input())
+        attempts += 1
+
+        if guess < random_number:
+            print("Too low! Try again.")
+            led.on()  # Turn on LED to indicate "too low"
+        elif guess > random_number:
+            print("Too high! Try again.")
+            led.on()  # Turn on LED to indicate "too high"
+        else:
+            print(f"Congratulations! You guessed it in {attempts} attempts.")
+            break  # End the game
+
+    except ValueError:
+        print("Invalid input. Please enter a number between 1 and 100.")
+
+    # Debounce the button
+    while button.value() == 1:
+        utime.sleep_ms(10)
+
+# End of the game
+print("Game over.")
